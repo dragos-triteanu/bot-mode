@@ -6,6 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 import org.openqa.selenium.support.PageFactory;
@@ -76,14 +77,14 @@ public class FacebookPage {
                 LOG.info("Count {} : Got error while getting url={} . The message was={}",count,url,timeout.getMessage());
                 continue;
             }
-
+            webDriver.switchTo().activeElement();
             try {
                 writeInPostTextbox(post);
                 LOG.info("SUCCESSFULLY posted to url={}",url);
             }catch (Exception e){
                 LOG.info("Could not post on group : {}",url);
                 try{
-                writeInSellSomething(post);
+                //writeInSellSomething(post);
                 }catch(Exception e2){
                     try {
                         clickJoinGroupButton();
@@ -223,8 +224,21 @@ public class FacebookPage {
 
     public void writeInSellSomething(String text) throws InterruptedException {
         WebElement postBox = webDriver.findElement(By.cssSelector("input[placeholder='What are you selling?']"));
-        postBox.click();
+
+        TimeUnit.SECONDS.sleep(1);
+        postBox.sendKeys("");
+        TimeUnit.SECONDS.sleep(1);
+        postBox.sendKeys(text);
         TimeUnit.SECONDS.sleep(2);
+        WebElement addPrice = webDriver.findElement(By.cssSelector("input[placeholder='Add a price']"));
+        TimeUnit.SECONDS.sleep(1);
+        new Actions(webDriver).moveToElement(addPrice).perform();
+        addPrice.sendKeys("1");
+        TimeUnit.SECONDS.sleep(2);
+
+
+        String ctrlEnter = Keys.chord(Keys.LEFT_CONTROL,Keys.ENTER);
+        addPrice.sendKeys(ctrlEnter);
     }
 
 
